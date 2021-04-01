@@ -38,8 +38,8 @@ export default function Home({ postsPagination }: HomeProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts?.map(post => (
-            <Link href={`/posts/${post.uid}`}>
-              <a key={post.uid}>
+            <Link key={post.uid} href={`/posts/${post.uid}`}>
+              <a>
                 <strong> {post.data.title} </strong>
                 <p>{post.data.subtitle}</p>
                 <time>{post.first_publication_date}</time>
@@ -57,7 +57,10 @@ export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
 
   const response = await prismic.query(
-    Prismic.predicates.at('document.type', 'posts')
+    Prismic.predicates.at('document.type', 'posts'),
+    {
+      pageSize: 20,
+    }
   );
 
   const posts = response.results.map(post => {
