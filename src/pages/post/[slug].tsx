@@ -8,9 +8,6 @@ import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
 import { getPrismicClient } from '../../services/prismic';
 
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
-
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 
 import Header from '../../components/Header';
@@ -18,6 +15,7 @@ import Comments from '../../components/Comments';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import { formatDateToPtBr } from '../../utils';
 
 interface Post {
   first_publication_date: string | null;
@@ -47,6 +45,18 @@ interface PostProps {
 export default function Post({ post, nextPost, prevPost }: PostProps) {
   const router = useRouter();
 
+  if (router.isFallback) {
+    return (
+      <>
+        <Head>
+          <title>@gisabernardess | spacetraveling</title>
+        </Head>
+        <Header />
+        <main>Carregando...</main>
+      </>
+    );
+  }
+
   const estimatedReadTime = useMemo(() => {
     if (router.isFallback) return 0;
 
@@ -73,9 +83,9 @@ export default function Post({ post, nextPost, prevPost }: PostProps) {
     return readTime;
   }, [post, router.isFallback]);
 
-  if (router.isFallback) {
-    return <div>Carregando...</div>;
-  }
+  const isPostEdited =
+    post.last_publication_date &&
+    post.last_publication_date !== post.first_publication_date;
 
   return (
     <>
@@ -95,9 +105,7 @@ export default function Post({ post, nextPost, prevPost }: PostProps) {
           <div>
             <time>
               <FiCalendar />
-              {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
-                locale: ptBR,
-              })}
+              {formatDateToPtBr(post.first_publication_date)}
             </time>
             <span>
               <FiUser />
@@ -109,15 +117,9 @@ export default function Post({ post, nextPost, prevPost }: PostProps) {
             </time>
           </div>
 
-          {post.last_publication_date !== post.first_publication_date && (
+          {isPostEdited && (
             <span>
-              {format(
-                new Date(post.last_publication_date),
-                "'* editado em 'dd MMM yyyy', às 'HH':'mm",
-                {
-                  locale: ptBR,
-                }
-              )}
+              * editado em {formatDateToPtBr(post.last_publication_date, true)}
             </span>
           )}
 
