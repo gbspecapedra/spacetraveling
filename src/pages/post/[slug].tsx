@@ -20,6 +20,7 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -102,6 +103,18 @@ export default function Post({ post }: PostProps) {
               {estimatedReadTime} min
             </time>
           </div>
+
+          {post.last_publication_date && (
+            <span>
+              {format(
+                new Date(post.last_publication_date),
+                "'* editado em 'dd MMM yyyy', às 'HH':'mm",
+                {
+                  locale: ptBR,
+                }
+              )}
+            </span>
+          )}
 
           {post.data.content.map(post => (
             <section key={post.heading} className={styles.postContent}>

@@ -42,6 +42,17 @@
       }
     }
   }
+
+  & > span {
+    display: block;
+    margin-top: 1rem;
+
+    font-size: 0.875rem;
+    font-style: italic;
+    line-height: 1.06rem;
+
+    color: var(--info);
+  }
 }
 
 .postContent {
