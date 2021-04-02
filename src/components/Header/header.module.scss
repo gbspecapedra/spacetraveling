@@ -1,8 +1,8 @@
 .container {
   height: 6rem;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 2rem 2rem;
+
+  display: flex;
+  align-items: center;
 
   img {
     height: 25px;

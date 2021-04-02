@@ -17,13 +17,13 @@
 
 <p align="center">
   <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/gisabernardess/spacetraveling">
-  
+
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/gisabernardess/spacetraveling">
-  
+
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/gisabernardess/spacetraveling">
-  
+
   <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/gisabernardess/spacetraveling">
-  
+
   <img alt="Github license" src="https://img.shields.io/github/license/gisabernardess/spacetraveling">
 </p>
 
@@ -47,6 +47,7 @@ This project was developed with the following technologies:
 - [Prismic CMS](https://prismic.io/)
 - [react-icons](https://react-icons.github.io/react-icons/)
 - [date-fns](https://date-fns.org/docs/Getting-Started)
+- [utterances](https://utteranc.es/)
 
 ## 🔖 Layout
 
@@ -56,9 +57,10 @@ You can view the layout of the project in the [web](https://www.figma.com/file/g
 
 ## ℹ️ How To Use
 
-To clone and run this application, you'll need [Git](https://git-scm.com) and  [Yarn](https://legacy.yarnpkg.com). From your command line:
-    <div class="highlight highlight-source-shell">
-      <pre><span class="pl-c"><span class="pl-c">#</span> Clone the repository</span>
+To clone and run this application, you'll need [Git](https://git-scm.com) and [Yarn](https://legacy.yarnpkg.com). From your command line:
+
+<div class="highlight highlight-source-shell">
+<pre><span class="pl-c"><span class="pl-c">#</span> Clone the repository</span>
 $ git clone https://github.com/gisabernardess/spacetraveling.git <br/>
 <span class="pl-c"><span class="pl-c">#</span> Go into the directory</span>
 $ <span class="pl-c1">cd</span> refactoring <br/>
@@ -80,8 +82,11 @@ $ yarn dev <br/>
 - Formatting dates with `date-fns`;
 - Use of icons with `react-icons`;
 - Requisições HTTP com `fetch`;
+- Comments with Utteranc;
+- Preview of the Prismic document;
+- Navigation between previous and next post;
+- Post editing information;
 - and more.
-
 
 ## 📄 License
 
