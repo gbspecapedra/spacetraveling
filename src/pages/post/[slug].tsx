@@ -38,11 +38,12 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
   nextPost: Post | null;
   prevPost: Post | null;
 }
 
-export default function Post({ post, nextPost, prevPost }: PostProps) {
+export default function Post({ post, preview, nextPost, prevPost }: PostProps) {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -159,7 +160,14 @@ export default function Post({ post, nextPost, prevPost }: PostProps) {
             )}
           </div>
         </div>
-        <Comments />
+        {preview && (
+          <aside className={commonStyles.exitPreview}>
+            <Link href="/api/exit-preview">
+              <a>Sair do modo Preview</a>
+            </Link>
+          </aside>
+        )}
+        {!preview && <Comments />}
       </footer>
     </>
   );
@@ -184,10 +192,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
   const { slug } = params;
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
 
   if (!response) {
     return {
@@ -216,6 +230,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post: response,
+      preview,
       prevPost: prevPost ?? null,
       nextPost: nextPost ?? null,
     },
