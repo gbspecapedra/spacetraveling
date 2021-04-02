@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Link from 'next/link';
 
 import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
@@ -21,6 +22,7 @@ import styles from './post.module.scss';
 interface Post {
   first_publication_date: string | null;
   last_publication_date: string | null;
+  uid: string;
   data: {
     title: string;
     banner: {
@@ -38,9 +40,11 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  nextPost: Post | null;
+  prevPost: Post | null;
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, nextPost, prevPost }: PostProps) {
   const router = useRouter();
 
   const estimatedReadTime = useMemo(() => {
@@ -77,6 +81,7 @@ export default function Post({ post }: PostProps) {
     <>
       <Head>
         <title>{post.data.title} | spacetraveling</title>
+        <meta name="description" content={post.data.title} />
       </Head>
 
       <Header />
@@ -104,7 +109,7 @@ export default function Post({ post }: PostProps) {
             </time>
           </div>
 
-          {post.last_publication_date && (
+          {post.last_publication_date !== post.first_publication_date && (
             <span>
               {format(
                 new Date(post.last_publication_date),
@@ -130,6 +135,28 @@ export default function Post({ post }: PostProps) {
       </main>
 
       <footer className={`${commonStyles.container} ${styles.footer}`}>
+        <div className={styles.navigation}>
+          <div>
+            {prevPost && (
+              <Link href={`/post/${prevPost.uid}`}>
+                <a className={styles.previous}>
+                  <span>{prevPost.data.title}</span>
+                  Post anterior
+                </a>
+              </Link>
+            )}
+          </div>
+          <div>
+            {nextPost && (
+              <Link href={`/post/${nextPost.uid}`}>
+                <a className={styles.next}>
+                  <span>{nextPost.data.title}</span>
+                  Próximo post
+                </a>
+              </Link>
+            )}
+          </div>
+        </div>
         <Comments />
       </footer>
     </>
@@ -138,9 +165,12 @@ export default function Post({ post }: PostProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  const posts = await prismic.query([
-    Prismic.predicates.at('document.type', 'posts'),
-  ]);
+  const posts = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      fetch: ['posts.title'],
+    }
+  );
 
   const paths = posts.results.map(post => ({
     params: { slug: post.uid },
@@ -157,10 +187,36 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
+  if (!response) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const prevPost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date desc]',
+      fetch: ['posts.title'],
+    })
+  ).results[0];
+
+  const nextPost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date]',
+      fetch: ['posts.title'],
+    })
+  ).results[0];
+
   return {
     props: {
       post: response,
+      prevPost: prevPost ?? null,
+      nextPost: nextPost ?? null,
     },
-    revalidate: 60 * 30, // 30 minutes
+    revalidate: 60 * 60, // 1 hour
   };
 };

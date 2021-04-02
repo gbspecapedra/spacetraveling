@@ -100,6 +100,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const response = await prismic.query(
     Prismic.predicates.at('document.type', 'posts'),
     {
+      fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
       pageSize: 2,
     }
   );
@@ -108,5 +109,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       postsPagination: response,
     },
+    revalidate: 60 * 30, // 30 min
   };
 };
