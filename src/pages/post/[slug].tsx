@@ -13,6 +13,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 
 import Header from '../../components/Header';
+import Comments from '../../components/Comments';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
@@ -114,6 +115,10 @@ export default function Post({ post }: PostProps) {
           ))}
         </article>
       </main>
+
+      <footer className={`${commonStyles.container} ${styles.footer}`}>
+        <Comments />
+      </footer>
     </>
   );
 }
