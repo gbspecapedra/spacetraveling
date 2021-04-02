@@ -1,6 +1,27 @@
-.posts {
-  max-width: 700;
+.content {
+  padding: 2rem 2rem;
 
+  button {
+    background: transparent;
+    border: none;
+
+    display: flex;
+    margin-top: 4rem;
+
+    color: var(--highlight);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1.361rem;
+
+    transition: filter 0.3s ease;
+
+    &:hover {
+      filter: opacity(0.8);
+    }
+  }
+}
+
+.posts {
   a {
     display: block;
 
@@ -9,12 +30,18 @@
       padding-top: 2rem;
     }
 
+    &:hover strong {
+      color: var(--highlight);
+    }
+
     strong {
       display: block;
       font-size: 1.75rem;
       line-height: 2.063rem;
       font-weight: 700;
       color: var(--heading);
+
+      transition: color 0.2s;
     }
 
     p {
@@ -46,10 +73,4 @@
       }
     }
   }
-}
-
-.morePosts {
-  display: flex;
-  margin-top: 4rem;
-  color: var(--highlight);
 }

@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 
 import Prismic from '@prismicio/client';
+import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
 import { getPrismicClient } from '../services/prismic';
 
 import { format } from 'date-fns';
@@ -33,15 +35,26 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps) {
-  const { results: posts } = postsPagination;
+  const [posts, setPosts] = useState<Post[]>(postsPagination.results);
+  const [hasMorePosts, setHasMorePosts] = useState(!!postsPagination.next_page);
+
+  async function handleLoadMorePosts(): Promise<void> {
+    const loadMorePostsResponse: ApiSearchResponse = await (
+      await fetch(postsPagination.next_page)
+    ).json();
+
+    setPosts([...posts, ...loadMorePostsResponse.results]);
+    setHasMorePosts(!!loadMorePostsResponse.next_page);
+  }
+
   return (
     <>
       <Head>
         <title>Home | spacetraveling</title>
       </Head>
 
-      <main className={commonStyles.container}>
-        <div className={styles.posts}>
+      <main className={`${commonStyles.container} ${styles.content}`}>
+        <div className={`${commonStyles.container} ${styles.posts}`}>
           {posts?.map(post => (
             <Link key={post.uid} href={`/post/${post.uid}`}>
               <a>
@@ -50,7 +63,13 @@ export default function Home({ postsPagination }: HomeProps) {
                 <div>
                   <time>
                     <FiCalendar />
-                    {post.first_publication_date}
+                    {format(
+                      new Date(post.first_publication_date),
+                      'dd MMM yyyy',
+                      {
+                        locale: ptBR,
+                      }
+                    )}
                   </time>
                   <span>
                     <FiUser />
@@ -60,8 +79,12 @@ export default function Home({ postsPagination }: HomeProps) {
               </a>
             </Link>
           ))}
-          <strong className={styles.morePosts}>Carregar mais posts</strong>
         </div>
+        {!!hasMorePosts && (
+          <button type="button" onClick={handleLoadMorePosts}>
+            Carregar mais posts
+          </button>
+        )}
       </main>
     </>
   );
@@ -73,33 +96,13 @@ export const getStaticProps: GetStaticProps = async () => {
   const response = await prismic.query(
     Prismic.predicates.at('document.type', 'posts'),
     {
-      pageSize: 20,
+      pageSize: 2,
     }
   );
 
-  const posts = response.results.map(post => {
-    return {
-      uid: post.uid,
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        'dd MMM yyyy',
-        {
-          locale: ptBR,
-        }
-      ),
-      data: {
-        title: post.data.title,
-        subtitle: post.data.subtitle,
-        author: post.data.author,
-      },
-    };
-  });
-
   return {
     props: {
-      postsPagination: {
-        results: posts,
-      },
+      postsPagination: response,
     },
   };
 };
