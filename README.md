@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  <img alt="spacetraveling" src="/">
+  <img alt="spacetraveling" src="https://user-images.githubusercontent.com/17882257/113431495-37872e80-93b2-11eb-8e0f-958d0c8a6eff.gif">
 </p>
 
 <br/>
