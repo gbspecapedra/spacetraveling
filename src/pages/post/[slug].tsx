@@ -12,6 +12,8 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 
+import Header from '../../components/Header';
+
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
@@ -75,6 +77,8 @@ export default function Post({ post }: PostProps) {
         <title>{post.data.title} | spacetraveling</title>
       </Head>
 
+      <Header />
+
       <main>
         <div className={styles.banner}>
           <img src={post.data.banner.url} alt="banner" />
@@ -84,7 +88,9 @@ export default function Post({ post }: PostProps) {
           <div>
             <time>
               <FiCalendar />
-              {post.first_publication_date}
+              {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
+                locale: ptBR,
+              })}
             </time>
             <span>
               <FiUser />
@@ -133,20 +139,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
-  const post = {
-    first_publication_date: format(
-      new Date(response.first_publication_date),
-      'dd MMM yyyy',
-      {
-        locale: ptBR,
-      }
-    ),
-    data: response.data,
-  };
-
   return {
     props: {
-      post,
+      post: response,
     },
     revalidate: 60 * 30, // 30 minutes
   };

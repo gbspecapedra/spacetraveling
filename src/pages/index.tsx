@@ -12,6 +12,8 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import { FiCalendar, FiUser } from 'react-icons/fi';
 
+import Header from '../components/Header';
+
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
@@ -52,6 +54,8 @@ export default function Home({ postsPagination }: HomeProps) {
       <Head>
         <title>Home | spacetraveling</title>
       </Head>
+
+      <Header />
 
       <main className={`${commonStyles.container} ${styles.content}`}>
         <div className={`${commonStyles.container} ${styles.posts}`}>
